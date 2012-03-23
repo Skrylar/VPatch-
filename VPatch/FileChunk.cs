@@ -15,7 +15,7 @@ namespace VPatch
 	/// </summary>
 	public struct FileChunk : IComparable<FileChunk>
 	{
-		public int Offset;
+		public long Offset;
 		public ChunkChecksum Checksum;
 		
 		public int CompareTo(FileChunk other)

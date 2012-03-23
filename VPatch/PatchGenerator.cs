@@ -32,28 +32,28 @@ namespace VPatch
 	{
 		#region Operating Streams
 		Stream mSource;
-		int mSourceSize;
+		long mSourceSize;
 		Stream mTarget;
-		int mTargetSize;
+		long mTargetSize;
 		Stream mPatch;
 		#endregion
 		
-		int mBlockSize;
+		long mBlockSize;
 		
 		byte[] mTargetCData;
-		int mTargetCDataBaseOffset;
-		int mTargetCDataSize;
+		long mTargetCDataBaseOffset;
+		long mTargetCDataSize;
 		
 		#region Constants
-		public const int TargetBufferSize = 65536;
-		public const int TargetLookaheadSize = 4096;
-		public const int DefaultBlockSize = 64;
-		public const int MaxBlockSize = 16384;
-		public const int DefaultMaxMatches = 500;
+		public const long TargetBufferSize = 65536;
+		public const long TargetLookaheadSize = 4096;
+		public const long DefaultBlockSize = 64;
+		public const long MaxBlockSize = 16384;
+		public const long DefaultMaxMatches = 500;
 		#endregion
 		
-		public PatchGenerator(Stream source, int sourceSize,
-		                        Stream target, int targetSize,
+		public PatchGenerator(Stream source, long sourceSize,
+		                        Stream target, long targetSize,
 		                       Stream patch)
 		{
 			if (source == null)
@@ -97,7 +97,7 @@ namespace VPatch
 			bool firstRun = true;
 			
 			// currentOffset is in the target file
-			for (int currentOffset = 0; currentOffset < mTargetSize;) {
+			for (long currentOffset = 0; currentOffset < mTargetSize;) {
 				bool reloadTargetCData = true;
 				
 				if ((currentOffset >= mTargetCDataBaseOffset) &&
@@ -123,10 +123,10 @@ namespace VPatch
 					
 					// we need to update the memory cache of target
 					// TODO: Emit debug info here, if verbose is enabled.
-					// cout << "[CacheReload] File position = " << static_cast<unsigned int>(targetCDataBaseOffset) << "\n";
+					// cout << "[CacheReload] File position = " << static_cast<unsigned long>(targetCDataBaseOffset) << "\n";
 					
 					mTarget.Seek(mTargetCDataBaseOffset, SeekOrigin.Begin);
-					mTarget.Read(mTargetCData, 0, mTargetCDataSize);
+					mTarget.Read(mTargetCData, 0, (int)mTargetCDataSize);
 				}
 				
 				SameBlock currentSameBlock = FindBlock(sourceTree, currentOffset);
@@ -135,7 +135,7 @@ namespace VPatch
 					SameBlock previousBlock = sameBlocks[sameBlocks.Count-1];
 					if ((previousBlock.TargetOffset + previousBlock.Size) > currentSameBlock.TargetOffset) {
 						// There is overlap, resolve it.
-						int difference = previousBlock.TargetOffset + previousBlock.Size - currentSameBlock.TargetOffset;
+						long difference = previousBlock.TargetOffset + previousBlock.Size - currentSameBlock.TargetOffset;
 						currentSameBlock.SourceOffset += difference;
 						currentSameBlock.TargetOffset += difference;
 						currentSameBlock.Size -= difference;
@@ -157,16 +157,16 @@ namespace VPatch
 			sameBlocks.Add(lastBlock);
 		}
 		
-		SameBlock FindBlock(ChunkedFile sourceTree, int targetFileStartOffset)
+		SameBlock FindBlock(ChunkedFile sourceTree, long targetFileStartOffset)
 		{
 			if ((mTargetSize - targetFileStartOffset) < BlockSize) return null;
 			
-			int preDataSize = targetFileStartOffset - mTargetCDataBaseOffset;
+			long preDataSize = targetFileStartOffset - mTargetCDataBaseOffset;
 			// rea the current data part in to memory
 			ChunkChecksum checksum = new ChunkChecksum();
 			sourceTree.CalculateChecksum(mTargetCData, preDataSize, BlockSize, ref checksum);
 			
-			int foundIndex;
+			long foundIndex;
 			if (sourceTree.Search(checksum, out foundIndex)) {
 				// we found something
 				SameBlock bestMatch = new SameBlock();
@@ -175,7 +175,7 @@ namespace VPatch
 				bestMatch.Size = 0; // default to 0. because they can all be mismatches as well
 				
 				// inreae match size if possible, also check if it is a match at all
-				int matchCount = 0;
+				long matchCount = 0;
 				while ((sourceTree.Chunks[foundIndex].Checksum == checksum) &&
 				       ((MaximumMatches == 0) || (matchCount < MaximumMatches)))
 				{
@@ -204,9 +204,9 @@ namespace VPatch
 			}
 		}
 		
-		public const int ComparisonSize = 2048;
+		public const long ComparisonSize = 2048;
 		
-		void ImproveSameBlockMatch(ref SameBlock match, int currentBest)
+		void ImproveSameBlockMatch(ref SameBlock match, long currentBest)
 		{
 			// we should now try to make the match longer by reading big chunks of the files to come
 			mSource.Seek(match.SourceOffset + match.Size, SeekOrigin.Begin);
@@ -216,9 +216,9 @@ namespace VPatch
 				byte[] sourceData = new byte[ComparisonSize];
 				byte[] targetData = new byte[ComparisonSize];
 				while (true) {
-					int startTarget = match.TargetOffset + match.Size;
-					int startSource = match.SourceOffset + match.Size;
-					int checkSize = ComparisonSize;
+					long startTarget = match.TargetOffset + match.Size;
+					long startSource = match.SourceOffset + match.Size;
+					long checkSize = ComparisonSize;
 					
 					if (checkSize > (mTargetSize - startTarget)) {
 						checkSize = mTargetSize - startTarget;
@@ -228,12 +228,12 @@ namespace VPatch
 						checkSize = mSourceSize - startSource;
 					}
 					
-					mSource.Read(sourceData, 0, checkSize);
-					mTarget.Read(targetData,0, checkSize);
+					mSource.Read(sourceData, 0, (int)checkSize);
+					mTarget.Read(targetData, 0, (int)checkSize);
 					
 					// TODO: Could we optimize this with either an array primitive or unsafe pointers?
 					
-					int i = 0;
+					long i = 0;
 					while ((sourceData[i] == targetData[i]) &&
 					       (i < checkSize))
 					{
@@ -257,8 +257,8 @@ namespace VPatch
 				// we know it is stored in the cache... so we just need the source one
 				byte[] sourceData = new byte[MaxBlockSize];
 				
-				int startSource = match.SourceOffset - BlockSize;
-				int checkSize = BlockSize;
+				long startSource = match.SourceOffset - BlockSize;
+				long checkSize = BlockSize;
 				
 				if (checkSize > match.SourceOffset) {
 					checkSize = match.SourceOffset;
@@ -268,7 +268,7 @@ namespace VPatch
 				if (checkSize == 0) return;
 				
 				mSource.Seek(startSource, SeekOrigin.Begin);
-				mSource.Read(sourceData, 0, checkSize);
+				mSource.Read(sourceData, 0, (int)checkSize);
 				checkSize--;
 				
 				while (sourceData[checkSize] == (mTargetCData[match.TargetOffset - mTargetCDataBaseOffset - 1])) {
@@ -283,7 +283,7 @@ namespace VPatch
 		}
 		
 		#region Public Properties
-		public int BlockSize
+		public long BlockSize
 		{
 			get {
 				return mBlockSize;
@@ -298,7 +298,7 @@ namespace VPatch
 			}
 		}
 		
-		public int MaximumMatches { get; set; }
+		public long MaximumMatches { get; set; }
 		public bool Verbose { get; set; }
 		#endregion
 	}

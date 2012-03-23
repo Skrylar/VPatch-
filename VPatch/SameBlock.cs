@@ -28,9 +28,9 @@ namespace VPatch
 {
 	public class SameBlock
 	{
-		public int SourceOffset;
-		public int TargetOffset;
-		public int Size;
+		public long SourceOffset;
+		public long TargetOffset;
+		public long Size;
 		
 		public SameBlock()
 		{

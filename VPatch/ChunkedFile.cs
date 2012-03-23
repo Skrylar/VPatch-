@@ -15,16 +15,16 @@ namespace VPatch
 	public class ChunkedFile
 	{
 		public FileChunk[] Chunks { get; private set; }
-		public int ChunkCount
+		public long ChunkCount
 		{
 			get {
 				return Chunks.Length;
 			}
 		}
 		
-		public ChunkedFile(Stream fileStream, int fileSize, int chunkSize)
+		public ChunkedFile(Stream fileStream, long fileSize, long chunkSize)
 		{
-			int chunkCount = fileSize / chunkSize;
+			long chunkCount = fileSize / chunkSize;
 			
 			if (chunkCount < 1) {
 				Chunks = null;
@@ -32,8 +32,8 @@ namespace VPatch
 				Chunks = new FileChunk[chunkCount];
 				
 				byte[] data = new byte[chunkSize];
-				for (int i = 0; i < chunkCount; i++) {
-					fileStream.Read(data, 0, chunkSize);
+				for (long i = 0; i < chunkCount; i++) {
+					fileStream.Read(data, 0, (int)chunkSize);
 					Chunks[i].Offset = i * chunkSize;
 					CalculateChecksum(data, 0, chunkSize, ref Chunks[i].Checksum);
 				}
@@ -55,14 +55,14 @@ namespace VPatch
 		//   index of key, or -insertion_position -1 if key is not
 		//                 in the array. This value can easily be
 		//                 transformed into the position to insert it.
-		public bool Search(ChunkChecksum key, out int start)
+		public bool Search(ChunkChecksum key, out long start)
 		{
 			start = -1;
 			if (ChunkCount == 0) return false;
-			int first = 0;
-			int last = ChunkCount - 1;
+			long first = 0;
+			long last = ChunkCount - 1;
 			while (first <= last) {
-				int mid = (first + last) / 2; // compute mid point
+				long mid = (first + last) / 2; // compute mid point
 				if (key == Chunks[mid].Checksum) {
 					while (true) {
 						if (mid == 0) break;
@@ -84,7 +84,7 @@ namespace VPatch
 			return false;
 		}
 		
-		public void CalculateChecksum(byte[] data, int start, int size, ref ChunkChecksum K)
+		public void CalculateChecksum(byte[] data, long start, long size, ref ChunkChecksum K)
 		{
 			throw new NotImplementedException();
 			// K.v = *reinterpret_cast<CHECKSUM_BLOCK*>(data);
