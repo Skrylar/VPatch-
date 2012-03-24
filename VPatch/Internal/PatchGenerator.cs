@@ -37,7 +37,7 @@ namespace VPatch.Internal
 		long mTargetSize;
 		#endregion
 		
-		long mBlockSize;
+		long mBlockSize = DefaultBlockSize;
 		
 		byte[] mTargetCData;
 		long mTargetCDataBaseOffset;
@@ -95,12 +95,12 @@ namespace VPatch.Internal
 				bool reloadTargetCData = true;
 				
 				if ((currentOffset >= mTargetCDataBaseOffset) &&
-				    ((currentOffset + TargetLookaheadSize) < (mTargetCDataBaseOffset + TargetBufferSize)))
+				    (currentOffset + TargetLookaheadSize < mTargetCDataBaseOffset + TargetBufferSize))
 				{
 					if (firstRun) {
 						firstRun = false;
 					} else {
-						reloadTargetCData = true;
+						reloadTargetCData = false;
 					}
 				}
 				
@@ -113,13 +113,15 @@ namespace VPatch.Internal
 					mTargetCDataSize = TargetBufferSize;
 					
 					// check if this does not extend beyond EOF
-					if ((mTargetCDataBaseOffset + mTargetCDataSize) > mTargetSize) {
+					if (mTargetCDataBaseOffset + mTargetCDataSize > mTargetSize) {
 						mTargetCDataSize = mTargetSize - mTargetCDataBaseOffset;
 					}
 					
 					// we need to update the memory cache of target
 					// TODO: Emit debug info here, if verbose is enabled.
 					// cout << "[CacheReload] File position = " << static_cast<unsigned long>(targetCDataBaseOffset) << "\n";
+					
+					Console.WriteLine("[CacheReload] File position = {0}", mTargetCDataBaseOffset);
 					
 					mTarget.Seek(mTargetCDataBaseOffset, SeekOrigin.Begin);
 					mTarget.Read(mTargetCData, 0, (int)mTargetCDataSize);
@@ -129,13 +131,14 @@ namespace VPatch.Internal
 				if (currentSameBlock != null) {
 					// We have a match.
 					SameBlock previousBlock = sameBlocks[sameBlocks.Count-1];
-					if ((previousBlock.TargetOffset + previousBlock.Size) > currentSameBlock.TargetOffset) {
+					if (previousBlock.TargetOffset + previousBlock.Size > currentSameBlock.TargetOffset) {
 						// There is overlap, resolve it.
 						long difference = previousBlock.TargetOffset + previousBlock.Size - currentSameBlock.TargetOffset;
 						currentSameBlock.SourceOffset += difference;
 						currentSameBlock.TargetOffset += difference;
 						currentSameBlock.Size -= difference;
 					}
+					Console.WriteLine(currentSameBlock.ToString());
 					sameBlocks.Add(currentSameBlock);
 					
 					// TODO: Emit debug info here, if verbose is enabled.
@@ -149,18 +152,20 @@ namespace VPatch.Internal
 			
 			// Add a block at the end to prevent bounds checking hassles.
 			SameBlock lastBlock = new SameBlock();
+			lastBlock.SourceOffset = 0;
 			lastBlock.TargetOffset = mTargetSize;
+			lastBlock.Size = 0;
 			sameBlocks.Add(lastBlock);
 		}
 		
 		SameBlock FindBlock(ChunkedFile sourceTree, long targetFileStartOffset)
 		{
-			if ((mTargetSize - targetFileStartOffset) < BlockSize) return null;
+			if (mTargetSize - targetFileStartOffset < BlockSize) return null;
 			
 			long preDataSize = targetFileStartOffset - mTargetCDataBaseOffset;
 			// rea the current data part in to memory
 			ChunkChecksum checksum = new ChunkChecksum();
-			sourceTree.CalculateChecksum(mTargetCData, preDataSize, BlockSize, ref checksum);
+			sourceTree.CalculateChecksum(mTargetCData, preDataSize, BlockSize, checksum);
 			
 			long foundIndex;
 			if (sourceTree.Search(checksum, out foundIndex)) {
@@ -172,7 +177,8 @@ namespace VPatch.Internal
 				
 				// inreae match size if possible, also check if it is a match at all
 				long matchCount = 0;
-				while ((sourceTree.Chunks[foundIndex].Checksum == checksum) &&
+				var herp = sourceTree.Chunks[foundIndex].Checksum;
+				while ((herp == checksum) &&
 				       ((MaximumMatches == 0) || (matchCount < MaximumMatches)))
 				{
 					// check if this one is better than the current match
@@ -180,7 +186,7 @@ namespace VPatch.Internal
 					match.SourceOffset = sourceTree.Chunks[foundIndex].Offset;
 					match.TargetOffset = targetFileStartOffset;
 					match.Size = 0; // default to 0. could be a mismatch with the same key
-					ImproveSameBlockMatch(ref match, bestMatch.Size);
+					ImproveSameBlockMatch(match, bestMatch.Size);
 					if (match.Size > bestMatch.Size) {
 						bestMatch = match;
 					}
@@ -202,7 +208,7 @@ namespace VPatch.Internal
 		
 		public const long ComparisonSize = 2048;
 		
-		void ImproveSameBlockMatch(ref SameBlock match, long currentBest)
+		void ImproveSameBlockMatch(SameBlock match, long currentBest)
 		{
 			// we should now try to make the match longer by reading big chunks of the files to come
 			mSource.Seek(match.SourceOffset + match.Size, SeekOrigin.Begin);
@@ -211,6 +217,7 @@ namespace VPatch.Internal
 			{
 				byte[] sourceData = new byte[ComparisonSize];
 				byte[] targetData = new byte[ComparisonSize];
+				bool deepBreak = false;
 				while (true) {
 					long startTarget = match.TargetOffset + match.Size;
 					long startSource = match.SourceOffset + match.Size;
@@ -218,10 +225,12 @@ namespace VPatch.Internal
 					
 					if (checkSize > (mTargetSize - startTarget)) {
 						checkSize = mTargetSize - startTarget;
+						deepBreak = true;
 					}
 					
 					if (checkSize > (mSourceSize - startSource)) {
 						checkSize = mSourceSize - startSource;
+						deepBreak = true;
 					}
 					
 					mSource.Read(sourceData, 0, (int)checkSize);
@@ -230,15 +239,14 @@ namespace VPatch.Internal
 					// TODO: Could we optimize this with either an array primitive or unsafe pointers?
 					
 					long i = 0;
-					while ((sourceData[i] == targetData[i]) &&
-					       (i < checkSize))
+					while ((i < checkSize) && (sourceData[i] == targetData[i]))
 					{
 						match.Size++;
 						i++;
 					}
 					
-					// check if we stopped because we had a mismatch
-					if (i < checkSize) break;
+					// check if we stopped because we had a mismatch or ran out of input
+					if (i < checkSize || deepBreak) break;
 				}
 			}
 			
@@ -279,7 +287,16 @@ namespace VPatch.Internal
 		}
 		
 		#region Public Properties
-		public long BlockSize;
+		public long BlockSize
+		{
+			get {
+				return mBlockSize;
+			}
+			
+			set {
+				mBlockSize = value;
+			}
+		}
 		public long MaximumMatches;
 		public bool Verbose;
 		#endregion

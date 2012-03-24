@@ -35,5 +35,11 @@ namespace VPatch.Internal
 		public SameBlock()
 		{
 		}
+		
+		public override string ToString()
+		{
+			return string.Format("[SameBlock SourceOffset={0}, TargetOffset={1}, Size={2}]", SourceOffset, TargetOffset, Size);
+		}
+
 	}
 }

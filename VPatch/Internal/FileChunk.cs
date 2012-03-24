@@ -13,14 +13,33 @@ namespace VPatch.Internal
 	/// <summary>
 	/// Description of FileChunk.
 	/// </summary>
-	public struct FileChunk : IComparable<FileChunk>
+	public class FileChunk : IComparable, IComparable<FileChunk>, IEquatable<FileChunk>
 	{
 		public long Offset;
-		public ChunkChecksum Checksum;
+		public ChunkChecksum Checksum = new ChunkChecksum();
+		
+		public FileChunk()
+		{
+		}
+		
+		public bool Equals(FileChunk other)
+		{
+			return (Offset == other.Offset) && (Checksum == other.Checksum);
+		}
+		
+		public int CompareTo(object other) {
+			if (other is FileChunk) {
+				return CompareTo(other as FileChunk);
+			} else if (other is ChunkChecksum) {
+				return Checksum.CompareTo(other as ChunkChecksum);
+			} else {
+				throw new ArgumentException();
+			}
+		}
 		
 		public int CompareTo(FileChunk other)
 		{
-			if (Equals(this, other)) return 0;
+			if (Equals(other)) return 0;
 			if (Checksum < other.Checksum) return -1;
 			return 1;
 		}

@@ -9,13 +9,15 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Linq;
 using VPatch.Checksum;
 
 namespace VPatch.Internal
 {
 	public class ChunkedFile
 	{
-		public FileChunk[] Chunks { get; private set; }
+		public FileChunk[] Chunks;
 		public long ChunkCount
 		{
 			get {
@@ -32,15 +34,23 @@ namespace VPatch.Internal
 			} else {
 				Chunks = new FileChunk[chunkCount];
 				
+				Console.WriteLine("Filesize of {0} gives {1} chunks.", fileSize, chunkCount);
+				
 				byte[] data = new byte[chunkSize];
 				for (long i = 0; i < chunkCount; i++) {
 					fileStream.Read(data, 0, (int)chunkSize);
+					Chunks[i] = new FileChunk();
 					Chunks[i].Offset = i * chunkSize;
-					CalculateChecksum(data, 0, chunkSize, ref Chunks[i].Checksum);
+					CalculateChecksum(data, 0, chunkSize, Chunks[i].Checksum);
 				}
 				data = null;
 				
 				Array.Sort(Chunks);
+				
+				/*foreach (var c in Chunks) {
+					Console.WriteLine("Mem: {0} Chk: {1}", c.Offset, c.Checksum.ToString());
+					Console.ReadLine();
+				}*/
 			}
 		}
 		
@@ -60,36 +70,28 @@ namespace VPatch.Internal
 		{
 			start = -1;
 			if (ChunkCount == 0) return false;
-			long first = 0;
-			long last = ChunkCount - 1;
-			while (first <= last) {
-				long mid = (first + last) / 2; // compute mid point
-				if (key == Chunks[mid].Checksum) {
-					while (true) {
-						if (mid == 0) break;
-						mid--;
-						if (!(key == Chunks[mid].Checksum)) {
-							mid++;
-							break;
-						}
-					}
-					start = mid;
-					return true; // found it. return position
-				}
-				if (key < Chunks[mid].Checksum) {
-					last = mid - 1; // repeat search in bottom half.
-				} else {
-					first = mid + 1; // repeat search in top half.
-				}
+			
+			int idx = Array.BinarySearch(Chunks, key);
+			if (idx >= 0 && idx < Chunks.Length) {
+				start = Math.Max(0, idx-1);
+				return true;
+			} else {
+				return false;
 			}
-			return false;
 		}
 		
-		public void CalculateChecksum(byte[] data, long start, long size, ref ChunkChecksum K)
+		public void CalculateChecksum(byte[] data, long start, long size, ChunkChecksum K)
 		{
-			var br = new BinaryReader(new MemoryStream(data));
-			K.V = br.ReadInt64();
-			K.Adler32 = Adler32.Check(1, data);
+			unsafe {
+				fixed (byte *p = &data[start]) {
+					var i = (UInt64*)p;
+					K.V = i[0];
+					Console.WriteLine(K.V);
+				}
+			}
+			
+			//K.Adler32 = 0;
+			K.Adler32 = Adler32.Check(1, data, start, size);
 		}
 	}
 }

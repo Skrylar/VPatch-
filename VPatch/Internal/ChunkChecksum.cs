@@ -10,56 +10,54 @@ using System;
 
 namespace VPatch.Internal
 {
-	public struct ChunkChecksum : IComparable<ChunkChecksum>
+	public class ChunkChecksum : IEquatable<ChunkChecksum>, IComparable, IComparable<ChunkChecksum>
 	{
 		public ulong Adler32;
-		public Int64 V;
+		public UInt64 V;
 		
-		public int CompareTo(ChunkChecksum other)
+		public override string ToString()
 		{
-			// Equality check.
-			if ((V == other.V) &&
-			    (Adler32 == other.Adler32))
-			{
-				return 0;
-			}
-			
-			if (Adler32 < other.Adler32) return -1;
-			if (Adler32 == other.Adler32) {
-				if (V < other.V) {
-					return -1;
-				} else {
-					return 1;
-				}
+			return string.Format("[ChunkChecksum Adler32={0}, V={1}]", Adler32, V);
+		}
+		
+		public int CompareTo(object other)
+		{
+			if (other is ChunkChecksum) {
+				return CompareTo(other as ChunkChecksum);
 			} else {
-				return 1;
+				throw new ArgumentException();
 			}
 		}
 		
-		#region Equals and GetHashCode implementation
+		public int CompareTo(ChunkChecksum other)
+		{
+			if (Equals(other)) return 0;
+			if (Adler32 < other.Adler32) return -1;
+			if (Adler32 == other.Adler32) {
+				if (V < other.V) return -1;
+			}
+			return 1;
+		}
+		
 		public override bool Equals(object obj)
 		{
-			return (obj is ChunkChecksum) && Equals((ChunkChecksum)obj);
+			if (obj is ChunkChecksum) {
+				return Equals(obj as ChunkChecksum);
+			} else {
+				throw new ArgumentException();
+			}
 		}
 		
 		public bool Equals(ChunkChecksum other)
 		{
-			return this.Adler32 == other.Adler32 && this.V == other.V;
+			if (Adler32 == other.Adler32 && V == other.V)
+				return true;
+			return false;
 		}
-		
-		public override int GetHashCode()
-		{
-			int hashCode = 0;
-			unchecked {
-				hashCode += 1000000007 * Adler32.GetHashCode();
-				hashCode += 1000000009 * V.GetHashCode();
-			}
-			return hashCode;
-		}
-		
+
 		public static bool operator ==(ChunkChecksum lhs, ChunkChecksum rhs)
 		{
-			return lhs.Equals(rhs);
+			return (lhs.Equals(rhs));
 		}
 		
 		public static bool operator !=(ChunkChecksum lhs, ChunkChecksum rhs)
@@ -67,16 +65,14 @@ namespace VPatch.Internal
 			return !(lhs == rhs);
 		}
 		
-		public static bool operator <(ChunkChecksum lhs, ChunkChecksum rhs)
+		public static bool operator <(ChunkChecksum l, ChunkChecksum r)
 		{
-			return (lhs.CompareTo(rhs) == -1);
+			return (l.CompareTo(r) == -1);
 		}
 		
-		public static bool operator >(ChunkChecksum lhs, ChunkChecksum rhs)
+		public static bool operator >(ChunkChecksum l, ChunkChecksum r)
 		{
-			return (lhs.CompareTo(rhs) == 1);
+			return (l.CompareTo(r) == 1);
 		}
-		#endregion
-
 	}
 }

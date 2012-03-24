@@ -15,8 +15,9 @@ namespace VPatch.Checksum
 		public const int BASE = 65521;
 		public const int NMAX = 5552;
 		
-		public static ulong Check(ulong adler, byte[] buf)
+		public static ulong Check(ulong adler, byte[] buf, long start, long size)
 		{
+			//Console.WriteLine("Adlering {0} bytes from {1}.", size, start);
 			unchecked {
 				ulong s1 = adler & 0xFFFF;
 				ulong s2 = (adler >> 16) & 0xFFFF;
@@ -25,25 +26,16 @@ namespace VPatch.Checksum
 				if (buf == null) return 1;
 				if (buf.Length == 0) return 1;
 				
-				long len = buf.LongLength;
-				long idx = 0;
+				long len = size;
+				long idx = start;
 				
 				while (len > 0) {
 					k = (len < NMAX) ? (int)len : NMAX;
 					len -= k;
-					while (k >= 16) {
-						for (int j = 0; j < 16; j++) {
-							s1 += buf[idx+j];
-							s2 += s1;
-						}
-						idx += 16;
-						k -= 16;
-					}
-					if (k != 0) {
-						do {
-							s1 += buf[idx++];
-							s2 += s1;
-						} while (--k != 0);
+					while (k > 0) {
+						s1 += buf[idx++];
+						s2 += s1;
+						k--;
 					}
 					s1 %= BASE;
 					s2 %= BASE;

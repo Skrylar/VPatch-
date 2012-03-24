@@ -88,7 +88,7 @@ namespace VPatch
 		
 		long MakeMultipleOfTwo(long input)
 		{
-			long counter = 0;
+			/*long counter = 0;
 			long accum = input;
 			
 			while (accum > 0) {
@@ -99,8 +99,9 @@ namespace VPatch
 			while (counter > 0) {
 				accum <<= 1;
 				counter--;
-			}
-			return accum;
+			}*/
+			// TODO: Fix this.
+			return input;
 		}
 	}
 }
