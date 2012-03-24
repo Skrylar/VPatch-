@@ -26,7 +26,7 @@ using System;
 
 namespace VPatch.Internal
 {
-	internal class SameBlock
+	public class SameBlock
 	{
 		public long SourceOffset;
 		public long TargetOffset;

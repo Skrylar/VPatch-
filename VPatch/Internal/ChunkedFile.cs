@@ -9,10 +9,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using VPatch.Checksum;
 
 namespace VPatch.Internal
 {
-	internal class ChunkedFile
+	public class ChunkedFile
 	{
 		public FileChunk[] Chunks { get; private set; }
 		public long ChunkCount
@@ -86,9 +87,9 @@ namespace VPatch.Internal
 		
 		public void CalculateChecksum(byte[] data, long start, long size, ref ChunkChecksum K)
 		{
-			throw new NotImplementedException();
-			// K.v = *reinterpret_cast<CHECKSUM_BLOCK*>(data);
-			// K.adler32 = Checksum::adler32(1L,data,size);
+			var br = new BinaryReader(new MemoryStream(data));
+			K.V = br.ReadInt64();
+			K.Adler32 = Adler32.Check(1, data);
 		}
 	}
 }

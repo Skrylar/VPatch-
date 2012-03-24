@@ -10,7 +10,7 @@ using System;
 
 namespace VPatch.Internal
 {
-	internal struct ChunkChecksum : IComparable<ChunkChecksum>
+	public struct ChunkChecksum : IComparable<ChunkChecksum>
 	{
 		public ulong Adler32;
 		public Int64 V;

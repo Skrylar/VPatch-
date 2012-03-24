@@ -13,7 +13,7 @@ namespace VPatch.Internal
 	/// <summary>
 	/// Description of FileChunk.
 	/// </summary>
-	internal struct FileChunk : IComparable<FileChunk>
+	public struct FileChunk : IComparable<FileChunk>
 	{
 		public long Offset;
 		public ChunkChecksum Checksum;

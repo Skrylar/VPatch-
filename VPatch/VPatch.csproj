@@ -41,9 +41,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Checksum\Adler32.cs" />
+    <Compile Include="Checksum\MD5.cs" />
     <Compile Include="Internal\ChunkChecksum.cs" />
     <Compile Include="Internal\ChunkedFile.cs" />
     <Compile Include="Internal\FileChunk.cs" />
+    <Compile Include="Internal\IPatchFormatter.cs" />
+    <Compile Include="Internal\PatchFileInformation.cs" />
     <Compile Include="Internal\PatchGenerator.cs" />
     <Compile Include="Internal\SameBlock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -51,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Internal" />
+    <Folder Include="Checksum" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

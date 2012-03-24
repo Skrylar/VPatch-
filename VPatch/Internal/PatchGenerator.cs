@@ -277,23 +277,9 @@ namespace VPatch.Internal
 		}
 		
 		#region Public Properties
-		public long BlockSize
-		{
-			get {
-				return mBlockSize;
-			}
-			
-			set {
-				if (value > MaxBlockSize)
-					throw new InvalidOperationException("Given block size exceeds maximum allowed value.");
-				if ((value % 2) != 0)
-					throw new InvalidOperationException("BlockSize must be a multiple of two!");
-				mBlockSize = value;
-			}
-		}
-		
-		public long MaximumMatches { get; set; }
-		public bool Verbose { get; set; }
+		public long BlockSize;
+		public long MaximumMatches;
+		public bool Verbose;
 		#endregion
 	}
 }
