@@ -7,6 +7,8 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.IO;
+using VPatch.Formatter;
 
 namespace GenPatch
 {
@@ -14,12 +16,20 @@ namespace GenPatch
 	{
 		public static void Main(string[] args)
 		{
-			Console.WriteLine("Hello World!");
+			Console.WriteLine("GenPatch# - 2012");
+			Console.WriteLine("Ported by Joshua Cearley, based on Koen van de Sande's VPatch.");
 			
-			// TODO: Implement Functionality Here
+			Console.WriteLine("Processing...");
+			using (var oldF = new FileStream("minecraft.jar", FileMode.Open))
+				using (var newF = new FileStream("minecraft2.jar", FileMode.Open))
+					using (var patF = new FileStream("patch.dat", FileMode.Create))
+			{
+				var vp = new VPatch.VPatch();
+				vp.CreatePatch(oldF, newF, new PatFormatter(), patF);
+			}
+			Console.WriteLine("Complete.");
 			
-			Console.Write("Press any key to continue . . . ");
-			Console.ReadKey(true);
+			Console.ReadLine();
 		}
 	}
 }

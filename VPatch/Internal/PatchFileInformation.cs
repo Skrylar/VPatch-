@@ -19,6 +19,8 @@ namespace VPatch.Internal
 		{
 		}
 		
+		public DateTime TargetDateTime { get; set; }
+		
 		public byte[] SourceChecksum
 		{
 			get {

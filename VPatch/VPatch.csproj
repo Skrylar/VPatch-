@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Checksum\Adler32.cs" />
     <Compile Include="Checksum\MD5.cs" />
+    <Compile Include="Formatter\PatFormatter.cs" />
     <Compile Include="Internal\ChunkChecksum.cs" />
     <Compile Include="Internal\ChunkedFile.cs" />
     <Compile Include="Internal\FileChunk.cs" />
@@ -56,6 +57,7 @@
   <ItemGroup>
     <Folder Include="Internal" />
     <Folder Include="Checksum" />
+    <Folder Include="Formatter" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

@@ -14,6 +14,6 @@ namespace VPatch.Internal
 {
 	public interface IPatchFormatter
 	{
-		void FormatPatch(PatchFileInformation fileInfo, IList<SameBlock> sameBlocks, Stream output);
+		void FormatPatch(PatchFileInformation fileInfo, IList<SameBlock> sameBlocks, Stream target, Stream output);
 	}
 }

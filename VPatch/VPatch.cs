@@ -82,7 +82,7 @@ namespace VPatch
 			List<SameBlock> sameBlocks = new List<SameBlock>();
 			patchGenerator.Execute(sameBlocks);
 			
-			formatter.FormatPatch(fileInfo, sameBlocks, output);
+			if (formatter != null) formatter.FormatPatch(fileInfo, sameBlocks, newVersionFile, output);
 			sameBlocks.Clear();
 		}
 		

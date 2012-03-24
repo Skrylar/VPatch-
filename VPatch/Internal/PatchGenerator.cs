@@ -108,6 +108,8 @@ namespace VPatch.Internal
 					// at least support looking back blockSize, if possible (findBlock relies on this!)
 					mTargetCDataBaseOffset = currentOffset - mBlockSize;
 					// handle start of file correctly
+					if (currentOffset < BlockSize) mTargetCDataBaseOffset = 0;
+					
 					mTargetCDataSize = TargetBufferSize;
 					
 					// check if this does not extend beyond EOF

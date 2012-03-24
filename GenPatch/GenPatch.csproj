@@ -48,5 +48,11 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VPatch\VPatch.csproj">
+      <Project>{41B2DED5-96FC-48F6-B67A-E076FEE21023}</Project>
+      <Name>VPatch</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
