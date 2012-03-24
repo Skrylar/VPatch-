@@ -26,7 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace VPatch
+namespace VPatch.Internal
 {
 	public sealed class PatchGenerator
 	{
@@ -35,7 +35,6 @@ namespace VPatch
 		long mSourceSize;
 		Stream mTarget;
 		long mTargetSize;
-		Stream mPatch;
 		#endregion
 		
 		long mBlockSize;
@@ -53,14 +52,11 @@ namespace VPatch
 		#endregion
 		
 		public PatchGenerator(Stream source, long sourceSize,
-		                        Stream target, long targetSize,
-		                       Stream patch)
+		                        Stream target, long targetSize)
 		{
 			if (source == null)
 				throw new ArgumentNullException();
 			if (target == null)
-				throw new ArgumentNullException();
-			if (patch == null)
 				throw new ArgumentNullException();
 			
 			mSource = source;
@@ -68,8 +64,6 @@ namespace VPatch
 			
 			mTarget = target;
 			mTargetSize = targetSize;
-			
-			mPatch = patch;
 			
 			mTargetCData = new byte[TargetBufferSize];
 			

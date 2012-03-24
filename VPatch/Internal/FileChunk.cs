@@ -8,12 +8,12 @@
  */
 using System;
 
-namespace VPatch
+namespace VPatch.Internal
 {
 	/// <summary>
 	/// Description of FileChunk.
 	/// </summary>
-	public struct FileChunk : IComparable<FileChunk>
+	internal struct FileChunk : IComparable<FileChunk>
 	{
 		public long Offset;
 		public ChunkChecksum Checksum;

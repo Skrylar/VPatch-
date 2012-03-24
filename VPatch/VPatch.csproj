@@ -41,12 +41,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChunkedFile.cs" />
-    <Compile Include="FileChunk.cs" />
-    <Compile Include="PatchGenerator.cs" />
+    <Compile Include="Internal\ChunkChecksum.cs" />
+    <Compile Include="Internal\ChunkedFile.cs" />
+    <Compile Include="Internal\FileChunk.cs" />
+    <Compile Include="Internal\PatchGenerator.cs" />
+    <Compile Include="Internal\SameBlock.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SameBlock.cs" />
-    <Compile Include="ChunkChecksum.cs" />
+    <Compile Include="VPatch.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Internal" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

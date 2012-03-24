@@ -24,9 +24,9 @@
 // Ported to C# 2012 Joshua Cearley
 using System;
 
-namespace VPatch
+namespace VPatch.Internal
 {
-	public class SameBlock
+	internal class SameBlock
 	{
 		public long SourceOffset;
 		public long TargetOffset;

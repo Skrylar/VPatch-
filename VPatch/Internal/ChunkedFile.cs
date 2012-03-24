@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace VPatch
+namespace VPatch.Internal
 {
-	public class ChunkedFile
+	internal class ChunkedFile
 	{
 		public FileChunk[] Chunks { get; private set; }
 		public long ChunkCount

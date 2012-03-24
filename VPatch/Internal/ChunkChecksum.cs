@@ -8,9 +8,9 @@
  */
 using System;
 
-namespace VPatch
+namespace VPatch.Internal
 {
-	public struct ChunkChecksum : IComparable<ChunkChecksum>
+	internal struct ChunkChecksum : IComparable<ChunkChecksum>
 	{
 		public ulong Adler32;
 		public Int64 V;
