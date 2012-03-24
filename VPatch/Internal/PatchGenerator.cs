@@ -177,8 +177,7 @@ namespace VPatch.Internal
 				
 				// inreae match size if possible, also check if it is a match at all
 				long matchCount = 0;
-				var herp = sourceTree.Chunks[foundIndex].Checksum;
-				while ((herp == checksum) &&
+				while ((sourceTree.Chunks[foundIndex].Checksum == checksum) &&
 				       ((MaximumMatches == 0) || (matchCount < MaximumMatches)))
 				{
 					// check if this one is better than the current match
@@ -247,6 +246,8 @@ namespace VPatch.Internal
 					
 					// check if we stopped because we had a mismatch or ran out of input
 					if (i < checkSize || deepBreak) break;
+					
+					//break; // Maybe many breaks will help?
 				}
 			}
 			

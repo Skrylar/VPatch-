@@ -72,8 +72,8 @@ namespace VPatch.Internal
 			if (ChunkCount == 0) return false;
 			
 			int idx = Array.BinarySearch(Chunks, key);
-			if (idx >= 0 && idx < Chunks.Length) {
-				start = Math.Max(0, idx-1);
+			if (idx >= 0) {
+				start = idx;
 				return true;
 			} else {
 				return false;
@@ -86,7 +86,6 @@ namespace VPatch.Internal
 				fixed (byte *p = &data[start]) {
 					var i = (UInt64*)p;
 					K.V = i[0];
-					Console.WriteLine(K.V);
 				}
 			}
 			

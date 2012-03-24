@@ -25,6 +25,8 @@ namespace GenPatch
 					using (var patF = new FileStream("patch.dat", FileMode.Create))
 			{
 				var vp = new VPatch.VPatch();
+				
+				vp.BlockSize = 64;
 				vp.CreatePatch(oldF, newF, new PatFormatter(), patF);
 			}
 			Console.WriteLine("Complete.");
