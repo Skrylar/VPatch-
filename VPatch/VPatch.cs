@@ -14,6 +14,10 @@ using VPatch.Internal;
 
 namespace VPatch
 {
+	/// <summary>
+	/// Utility class for providing the use of VPatch algorithms on
+	/// a set of streams for creating or applying differential updates.
+	/// </summary>
 	public class VPatch
 	{
 		/// <summary>
@@ -21,7 +25,7 @@ namespace VPatch
 		/// for differences in a file.
 		/// </summary>
 		/// <remarks>
-		/// Defaults to 64. Must be a multiple of two.
+		/// Defaults to 64. Not presently changeable as it can cause issues.
 		/// </remarks>
 		public long BlockSize
 		{
@@ -29,7 +33,7 @@ namespace VPatch
 				return mBlockSize;
 			}
 			
-			set {
+			private set {
 				mBlockSize = MakeMultipleOfTwo(value);
 			}
 		}
@@ -40,16 +44,36 @@ namespace VPatch
 		/// it results in more thorough checking of blocks for sameness.
 		/// </summary>
 		/// <remarks>
-		/// Defaults to 500.
+		/// Defaults to 500. Not presently changeable as it can cause issues.
 		/// </remarks>
-		public long MaximumMatches { get; set; }
+		public long MaximumMatches { get; private set; }
 		
+		/// <summary>
+		/// Creates a new VPatch object, for creating and applying patches
+		/// using file streams.
+		/// </summary>
 		public VPatch()
 		{
 			BlockSize = PatchGenerator.DefaultBlockSize;
 			MaximumMatches = PatchGenerator.DefaultMaxMatches;
 		}
 		
+		/// <summary>
+		/// Takes a stream for an old version of a file, preparing a
+		/// block-by-block patch to transform it in to the new version of a
+		/// file. The given formatter is used to output the prepared data,
+		/// which is finally written to the output stream.
+		/// </summary>
+		/// <param name="oldVersionFile">
+		/// Seekable and readable stream for the old version of data.
+		/// </param>
+		/// <param name="newVersionFile">
+		/// Seekable and readable stream for the new version of data.
+		/// </param>
+		/// <param name="formatter">
+		/// Formatter to transform prepared patch data to a useful output.
+		/// </param>
+		/// <param name="output"></param>
 		public void CreatePatch(Stream oldVersionFile, Stream newVersionFile, IPatchFormatter formatter, Stream output)
 		{
 			if (oldVersionFile == null)
@@ -86,6 +110,14 @@ namespace VPatch
 			sameBlocks.Clear();
 		}
 		
+		/// <summary>
+		/// Ideally this would take an input and ensure it was a power of two,
+		/// changing it in to the nearest power of two if it wasn't already;
+		/// however the algorithm doesn't presently work and just returns the
+		/// number placed in.
+		/// </summary>
+		/// <param name="input">Number to check as a multiple of two.</param>
+		/// <returns>Input, as the closest power of two.</returns>
 		long MakeMultipleOfTwo(long input)
 		{
 			/*long counter = 0;
