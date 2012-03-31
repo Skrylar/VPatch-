@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenPatch", "GenPatch\GenPat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VPatch", "VPatch\VPatch.csproj", "{41B2DED5-96FC-48F6-B67A-E076FEE21023}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vpatch#", "Vpatch#\Vpatch#.csproj", "{6053460E-5C0B-4281-BC46-A4082566A514}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -20,5 +22,9 @@ Global
 		{41B2DED5-96FC-48F6-B67A-E076FEE21023}.Debug|x86.ActiveCfg = Debug|x86
 		{41B2DED5-96FC-48F6-B67A-E076FEE21023}.Release|x86.Build.0 = Release|x86
 		{41B2DED5-96FC-48F6-B67A-E076FEE21023}.Release|x86.ActiveCfg = Release|x86
+		{6053460E-5C0B-4281-BC46-A4082566A514}.Debug|x86.Build.0 = Debug|x86
+		{6053460E-5C0B-4281-BC46-A4082566A514}.Debug|x86.ActiveCfg = Debug|x86
+		{6053460E-5C0B-4281-BC46-A4082566A514}.Release|x86.Build.0 = Release|x86
+		{6053460E-5C0B-4281-BC46-A4082566A514}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 EndGlobal

@@ -58,6 +58,15 @@ namespace VPatch
 			MaximumMatches = PatchGenerator.DefaultMaxMatches;
 		}
 		
+		public PatchApplyResponse ApplyPatch(Stream oldVersionFile, Stream patch, IPatchInterpreter interpreter, IPatchProgress prog, Stream output)
+		{
+			if (!interpreter.Analyze(patch)) {
+				return PatchApplyResponse.Failed;
+			}
+			
+			return interpreter.Apply(oldVersionFile, patch, output, prog);
+		}
+		
 		/// <summary>
 		/// Takes a stream for an old version of a file, preparing a
 		/// block-by-block patch to transform it in to the new version of a
@@ -74,7 +83,7 @@ namespace VPatch
 		/// Formatter to transform prepared patch data to a useful output.
 		/// </param>
 		/// <param name="output"></param>
-		public void CreatePatch(Stream oldVersionFile, Stream newVersionFile, IPatchFormatter formatter, Stream output)
+		public void CreatePatch(Stream oldVersionFile, Stream newVersionFile, IPatchFormatter formatter, IPatchProgress prog, Stream output)
 		{
 			if (oldVersionFile == null)
 				throw new NullReferenceException();
@@ -104,7 +113,7 @@ namespace VPatch
 			patchGenerator.MaximumMatches = MaximumMatches;
 			
 			List<SameBlock> sameBlocks = new List<SameBlock>();
-			patchGenerator.Execute(sameBlocks);
+			patchGenerator.Execute(sameBlocks, prog);
 			
 			if (formatter != null) formatter.FormatPatch(fileInfo, sameBlocks, newVersionFile, output);
 			sameBlocks.Clear();

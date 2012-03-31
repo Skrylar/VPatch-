@@ -76,7 +76,7 @@ namespace VPatch.Internal
 		/// This list will store blocks that have been found to have remained
 		/// the same between files.
 		/// </param>
-		public void Execute(IList<SameBlock> sameBlocks)
+		public void Execute(IList<SameBlock> sameBlocks, IPatchProgress prog)
 		{
 			if (sameBlocks == null)
 				throw new ArgumentNullException();
@@ -121,7 +121,9 @@ namespace VPatch.Internal
 					// TODO: Emit debug info here, if verbose is enabled.
 					// cout << "[CacheReload] File position = " << static_cast<unsigned long>(targetCDataBaseOffset) << "\n";
 					
-					Console.WriteLine("[CacheReload] File position = {0}", mTargetCDataBaseOffset);
+					if (prog != null) {
+						prog.OnPatchProgress(mTargetCDataBaseOffset, mTargetSize);
+					}
 					
 					mTarget.Seek(mTargetCDataBaseOffset, SeekOrigin.Begin);
 					mTarget.Read(mTargetCData, 0, (int)mTargetCDataSize);

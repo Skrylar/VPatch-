@@ -112,8 +112,7 @@ namespace VPatch.Formatter
 				bw.Write((byte)255);
 				long time = fileInfo.TargetDateTime.ToBinary();
 				
-				bw.Write((UInt32)(time >> 32) & 0xFFFFFFFF);
-				bw.Write((UInt32)(time & 0xFFFFFFFF));
+				bw.Write((Int64)time);
 				
 				noBlocks++;
 				bodySize += 9;

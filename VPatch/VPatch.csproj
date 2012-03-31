@@ -54,14 +54,18 @@
   <ItemGroup>
     <Compile Include="Checksum\Adler32.cs" />
     <Compile Include="Checksum\MD5.cs" />
+    <Compile Include="PatchApplyResponse.cs" />
     <Compile Include="Formatter\PatFormatter.cs" />
     <Compile Include="Internal\ChunkChecksum.cs" />
     <Compile Include="Internal\ChunkedFile.cs" />
     <Compile Include="Internal\FileChunk.cs" />
     <Compile Include="Internal\IPatchFormatter.cs" />
+    <Compile Include="Internal\IPatchInterpreter.cs" />
     <Compile Include="Internal\PatchFileInformation.cs" />
     <Compile Include="Internal\PatchGenerator.cs" />
     <Compile Include="Internal\SameBlock.cs" />
+    <Compile Include="Interpreter\PatInterpreter.cs" />
+    <Compile Include="IPatchProgress.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VPatch.cs" />
   </ItemGroup>
@@ -69,6 +73,7 @@
     <Folder Include="Internal" />
     <Folder Include="Checksum" />
     <Folder Include="Formatter" />
+    <Folder Include="Interpreter" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

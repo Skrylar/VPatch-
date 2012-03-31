@@ -20,6 +20,16 @@ namespace VPatch.Internal
 			return string.Format("[ChunkChecksum Adler32={0}, V={1}]", Adler32, V);
 		}
 		
+		public override int GetHashCode()
+		{
+			int hashCode = 0;
+			unchecked {
+				hashCode += 1000000007 * Adler32.GetHashCode();
+				hashCode += 1000000009 * V.GetHashCode();
+			}
+			return hashCode;
+		}
+		
 		public int CompareTo(object other)
 		{
 			if (other is ChunkChecksum) {

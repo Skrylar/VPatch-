@@ -21,6 +21,10 @@ namespace VPatch.Internal
 		
 		public DateTime TargetDateTime { get; set; }
 		
+		public uint BlockCount { get; set; }
+		
+		public uint BodySize { get; set; }
+		
 		public byte[] SourceChecksum
 		{
 			get {
