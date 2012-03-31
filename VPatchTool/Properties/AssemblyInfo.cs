@@ -9,11 +9,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("GenPatch")]
+[assembly: AssemblyTitle("VPatchTool")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("GenPatch")]
+[assembly: AssemblyProduct("VPatchTool")]
 [assembly: AssemblyCopyright("Copyright 2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

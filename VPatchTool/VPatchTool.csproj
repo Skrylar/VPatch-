@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
-    <ProjectGuid>{69CF2B5F-9592-48B2-A6BB-10BD80AD8CC3}</ProjectGuid>
+    <ProjectGuid>{B61EEC2E-29DF-433F-AFBC-DB55100C019E}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>Exe</OutputType>
-    <RootNamespace>GenPatch</RootNamespace>
-    <AssemblyName>GenPatch</AssemblyName>
+    <RootNamespace>VPatchTool</RootNamespace>
+    <AssemblyName>VPatchTool</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -31,6 +31,9 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NConsoler">
+      <HintPath>..\Dependencies\NConsoler.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -53,10 +56,6 @@
       <Project>{41B2DED5-96FC-48F6-B67A-E076FEE21023}</Project>
       <Name>VPatch</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ProfilingSessions\Session20120323_230313.sdps" />
-    <Content Include="ProfilingSessions\Session20120327_174758.sdps" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
