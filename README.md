@@ -63,7 +63,7 @@ files are under the BSD license just like the original VPatch code.
 	    misrepresented as being the original software.
 	 3. This notice may not be removed or altered from any source distribution.
 	---------------------------------------------------------------------------
-	 Ported to C# 2012 Joshua Cearley
+	Ported to C# 2012 Joshua Cearley
 
 Headers in the `.cs` files will be updated as time permits.
 
